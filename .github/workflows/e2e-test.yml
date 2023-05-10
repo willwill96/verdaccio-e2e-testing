@@ -1,0 +1,39 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  e2e-test:
+    services:
+      verdaccio-instance:
+        image: verdaccio/verdaccio
+        ports:
+          - 4873:4873
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 20
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: echo "registry=http://localhost:4873" > ~/.npmrc
+      - name: Publish Package
+        run: |
+          {
+            cd verdaccio-test
+            npm version 1.0.0-test-ci --git-tag-version=false
+            npm ci
+            npx npm-cli-login -u test -p 1234 -e test@domain.test -r http://localhost:4873
+            npm publish --registry http://localhost:4873
+          }
+      - name: "Test published package"
+        run: |
+          {
+            cd verdaccio-test-install
+            npm install
+            npm install my-test-pkg1@1.0.0-test-ci
+            npm run test
+          }

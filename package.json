@@ -1,0 +1,12 @@
+{
+  "name": "verdaccio-e2e-testing",
+  "version": "1.0.0",
+  "description": "Simple Repo to PoC e2e testing",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
